@@ -19,6 +19,13 @@ pub struct Renderable {
     pub bg: RGB,
 }
 
+/// Details what can be seen for an entity
+#[derive(Component)]
+pub struct Viewshed {
+    pub visible_tiles : Vec<rltk::Point>,
+    pub range : i32
+}
+
 /// Create a Player tag component we can later attach logic to.
 /// 
 /// This is essentially the player, things like movement and other actions are attached to it.
