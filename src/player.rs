@@ -1,9 +1,37 @@
-use crate::RunState;
-use rltk::{Point, Rltk, VirtualKeyCode};
-use specs::prelude::*;
 
-use super::{Map, Player, Position, State, TileType, Viewshed};
+use rltk::{Point, Rltk, VirtualKeyCode, RGB};
+use specs::prelude::*;
+use super::{Map, Player, Position, State, TileType, Viewshed, Name, Renderable, RunState};
 use std::cmp::{max, min};
+
+pub fn create_character(mut gs: State, player_x: i32, player_y: i32) -> State {
+
+    gs.ecs
+    .create_entity()
+    .with(Position {
+        x: player_x,
+        y: player_y,
+    })
+    .with(Renderable {
+        glyph: rltk::to_cp437('@'),
+        fg: RGB::named(rltk::YELLOW),
+        bg: RGB::named(rltk::BLACK),
+    })
+    .with(Player {})
+    .with(Viewshed {
+        visible_tiles: Vec::new(),
+        range: 8,
+        dirty: true,
+    })
+    .with(Name {
+        name: "Credence".to_string(),
+    })
+    .build();
+
+    gs.ecs.insert(Point::new(player_x, player_y));
+
+    gs
+}
 
 pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
     let mut positions = ecs.write_storage::<Position>();

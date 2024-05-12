@@ -7,6 +7,20 @@ pub struct Rect {
     pub y2: i32,
 }
 
+impl Clone for Rect {
+    fn clone(&self) -> Self {
+        // Implement the cloning logic for Rect
+        // Typically involves cloning each field individually
+        // For example:
+        Rect {
+            x1: self.x1,
+            x2: self.x2,
+            y1: self.y1,
+            y2: self.y2,
+        }
+    }
+}
+
 /// Impleent the Rectangle
 impl Rect {
     // Create a new rectangle.

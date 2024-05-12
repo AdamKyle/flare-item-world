@@ -19,6 +19,20 @@ pub struct Map {
     pub visible_tiles: Vec<bool>,
 }
 
+
+impl Clone for Map {
+    fn clone(&self) -> Self {
+        Map {
+            tiles: self.tiles.clone(),
+            rooms: self.rooms.clone(), // Clone only the rooms field
+            width: self.width,
+            height: self.height,
+            revealed_tiles: self.revealed_tiles.clone(),
+            visible_tiles: self.visible_tiles.clone(),
+        }
+    }
+}
+
 impl Map {
     pub fn xy_idx(&self, x: i32, y: i32) -> usize {
         (y as usize * self.width as usize) + x as usize
