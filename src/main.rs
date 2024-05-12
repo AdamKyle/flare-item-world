@@ -1,3 +1,5 @@
+extern crate console_error_panic_hook; 
+use std::panic;
 use rltk::{GameState, Rltk, RGB};
 use specs::prelude::*;
 
@@ -42,6 +44,8 @@ impl GameState for State {
 }
 
 fn main() -> rltk::BError {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+    
     use rltk::RltkBuilder;
 
     let context = RltkBuilder::simple80x50()

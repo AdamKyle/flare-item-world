@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 getrandom = { version = "0.2", features = ["js"] }
+console_error_panic_hook = "0.1.5"
 rltk = { git = "https://github.com/amethyst/bracket-lib" }
 specs = "0.20.0"
 specs-derive = "0.4.1"
