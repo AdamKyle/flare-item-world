@@ -11,15 +11,28 @@ pub fn monster_generation(mut gs: State, rooms: Vec<Rect>) -> State {
         let glyph: rltk::FontCharType;
         let roll = rng.roll_dice(1, 2);
         let name: String;
+        let combat_stats: CombatStats;
 
         match roll {
             1 => {
                 glyph = rltk::to_cp437('g');
-                name = "Goblin".to_string()
+                name = "Goblin".to_string();
+                combat_stats = CombatStats {
+                    max_hp: 16,
+                    hp: 16,
+                    defense: 3,
+                    power: 4,
+                };
             }
             _ => {
                 glyph = rltk::to_cp437('o');
-                name = "Orc".to_string()
+                name = "Orc".to_string();
+                combat_stats = CombatStats {
+                    max_hp: 16,
+                    hp: 16,
+                    defense: 5,
+                    power: 8,
+                };
             }
         }
 
@@ -40,12 +53,7 @@ pub fn monster_generation(mut gs: State, rooms: Vec<Rect>) -> State {
             .with(Name {
                 name: format!("{} #{}", &name, i),
             })
-            .with(CombatStats {
-                max_hp: 16,
-                hp: 16,
-                defense: 1,
-                power: 2,
-            })
+            .with(combat_stats)
             .with(BlocksTile {})
             .build();
     }

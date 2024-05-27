@@ -1,4 +1,4 @@
-use super::{Map, Monster, Position, RunState, Viewshed};
+use super::{Map, Monster, Position, RunState, Viewshed, WantsToMelee};
 use rltk::{console, Point};
 use specs::prelude::*;
 
@@ -15,6 +15,7 @@ impl<'a> System<'a> for MonsterAI {
         WriteStorage<'a, Viewshed>,
         ReadStorage<'a, Monster>,
         WriteStorage<'a, Position>,
+        WriteStorage<'a, WantsToMelee>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
@@ -27,6 +28,7 @@ impl<'a> System<'a> for MonsterAI {
             mut viewshed,
             monster,
             mut position,
+            mut wants_to_melee,
         ) = data;
 
         if *runstate != RunState::MonsterTurn {
@@ -39,9 +41,17 @@ impl<'a> System<'a> for MonsterAI {
             let distance =
                 rltk::DistanceAlg::Pythagoras.distance2d(Point::new(pos.x, pos.y), *player_pos);
             if distance < 1.5 {
-                console::log("Attack Player.");
+                wants_to_melee
+                    .insert(
+                        entity,
+                        WantsToMelee {
+                            target: *player_entity,
+                        },
+                    )
+                    .expect("Unable to insert attack");
             } else if viewshed.visible_tiles.contains(&*player_pos) {
                 // Path to the player
+
                 let path = rltk::a_star_search(
                     map.xy_idx(pos.x, pos.y),
                     map.xy_idx(player_pos.x, player_pos.y),
