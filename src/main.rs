@@ -21,6 +21,9 @@ pub use components::*;
 mod map;
 pub use map::*;
 
+mod gui;
+pub use gui::*;
+
 mod map_indexing_system;
 pub use map_indexing_system::*;
 
@@ -42,14 +45,19 @@ pub use melee_combat_system::*;
 mod damage_system;
 pub use damage_system::*;
 
+mod game_log;
+pub use game_log::*;
+
 fn main() -> rltk::BError {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
 
     use rltk::RltkBuilder;
 
-    let context = RltkBuilder::simple80x50()
-        .with_title("Tlessa Item World Demo")
+    let mut context = RltkBuilder::simple80x50()
+        .with_title("Tlessa's Item World!")
         .build()?;
+
+    context.with_post_scanlines(true);
 
     let mut gs = State { ecs: World::new() };
 

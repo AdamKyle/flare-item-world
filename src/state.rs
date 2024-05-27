@@ -1,8 +1,8 @@
-use crate::{melee_combat_system, DamageSystem, MeleeCombatSystem};
+use crate::{DamageSystem, MeleeCombatSystem};
 
 use super::{
-    damage_system, draw_map, player_input, Map, MapIndexingSystem, MonsterAI, Position, Renderable,
-    VisibilitySystem,
+    damage_system, draw_map, gui, player_input, Map, MapIndexingSystem, MonsterAI, Position,
+    Renderable, VisibilitySystem,
 };
 use rltk::{GameState, Rltk};
 use specs::prelude::*;
@@ -96,5 +96,7 @@ impl GameState for State {
                 ctx.set(pos.x, pos.y, render.fg, render.bg, render.glyph)
             }
         }
+
+        gui::draw_ui(&self.ecs, ctx);
     }
 }
