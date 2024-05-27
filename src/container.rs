@@ -1,4 +1,4 @@
-use super::{State, Position, Renderable, Viewshed, Player, Monster, Name};
+use super::{State, Position, Renderable, Viewshed, Player, Monster, Name, BlocksTile};
 use specs::prelude::*;
 
 /// A container struct providing methods for registering ECS components.
@@ -21,6 +21,7 @@ impl Container {
         gs.ecs.register::<Player>();
         gs.ecs.register::<Monster>();
         gs.ecs.register::<Name>();
+        gs.ecs.register::<BlocksTile>();
     
         gs
     }

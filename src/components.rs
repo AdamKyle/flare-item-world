@@ -27,6 +27,10 @@ pub struct Viewshed {
     pub dirty: bool,
 }
 
+// Create a Blocks Tile Tag.
+#[derive(Component, Debug)]
+pub struct BlocksTile {}
+
 /// Create a Player tag component we can later attach logic to.
 #[derive(Component, Debug)]
 pub struct Player {}

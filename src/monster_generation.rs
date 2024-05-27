@@ -1,6 +1,6 @@
+use super::{BlocksTile, Monster, Name, Position, Rect, Renderable, State, Viewshed};
 use rltk::RGB;
 use specs::prelude::*;
-use super::{State, Rect, Position, Renderable, Viewshed, Monster, Name};
 
 pub fn monster_generation(mut gs: State, rooms: Vec<Rect>) -> State {
     let mut rng = rltk::RandomNumberGenerator::new();
@@ -40,6 +40,7 @@ pub fn monster_generation(mut gs: State, rooms: Vec<Rect>) -> State {
             .with(Name {
                 name: format!("{} #{}", &name, i),
             })
+            .with(BlocksTile {})
             .build();
     }
 

@@ -1,23 +1,26 @@
-use super::{Position, Renderable, Map, MonsterAI, VisibilitySystem, player_input, draw_map};
+use super::{
+    draw_map, player_input, Map, MapIndexingSystem, MonsterAI, Position, Renderable,
+    VisibilitySystem,
+};
 use rltk::{GameState, Rltk};
 use specs::prelude::*;
 
 /// Create a state object that holds a ecs world
 pub struct State {
     pub ecs: World,
-    pub runstate: RunState,
 }
 
 /// Determine the game state: Running or waiting for input
 #[derive(PartialEq, Copy, Clone)]
 pub enum RunState {
-    Paused,
-    Running,
+    AwaitingInput,
+    PreRun,
+    PlayerTurn,
+    MonsterTurn,
 }
 
 /// State Logic
 impl State {
-
     /// Run predefined game systems.
     pub fn run_systems(&mut self) {
         let mut vis = VisibilitySystem {};
@@ -26,17 +29,10 @@ impl State {
         let mut mob = MonsterAI {};
         mob.run_now(&self.ecs);
 
-        self.ecs.maintain();
-    }
+        let mut mapindex = MapIndexingSystem {};
+        mapindex.run_now(&self.ecs);
 
-    /// Deterimine the state of the game
-    pub fn determine_run_state(&mut self, ctx: &mut Rltk) {
-        if self.runstate == RunState::Running {
-            self.run_systems();
-            self.runstate = RunState::Paused;
-        } else {
-            self.runstate = player_input(self, ctx);
-        }
+        self.ecs.maintain();
     }
 }
 
@@ -49,7 +45,34 @@ impl GameState for State {
     fn tick(&mut self, ctx: &mut Rltk) {
         ctx.cls();
 
-        self.determine_run_state(ctx);
+        let mut newrunstate;
+        {
+            let runstate = self.ecs.fetch::<RunState>();
+            newrunstate = *runstate;
+        }
+
+        match newrunstate {
+            RunState::PreRun => {
+                self.run_systems();
+                newrunstate = RunState::AwaitingInput;
+            }
+            RunState::AwaitingInput => {
+                newrunstate = player_input(self, ctx);
+            }
+            RunState::PlayerTurn => {
+                self.run_systems();
+                newrunstate = RunState::MonsterTurn;
+            }
+            RunState::MonsterTurn => {
+                self.run_systems();
+                newrunstate = RunState::AwaitingInput;
+            }
+        }
+
+        {
+            let mut runwriter = self.ecs.write_resource::<RunState>();
+            *runwriter = newrunstate;
+        }
 
         draw_map(&self.ecs, ctx);
 

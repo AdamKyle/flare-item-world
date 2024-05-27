@@ -1,4 +1,5 @@
 extern crate console_error_panic_hook;
+use rltk::Point;
 use specs::prelude::*;
 use std::panic;
 
@@ -20,6 +21,9 @@ pub use components::*;
 mod map;
 pub use map::*;
 
+mod map_indexing_system;
+pub use map_indexing_system::*;
+
 mod rect;
 pub use rect::Rect;
 
@@ -29,6 +33,8 @@ pub use player::*;
 mod monster_generation;
 pub use monster_generation::*;
 
+mod entity_manager;
+pub use entity_manager::*;
 
 fn main() -> rltk::BError {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -39,21 +45,16 @@ fn main() -> rltk::BError {
         .with_title("Tlessa Item World Demo")
         .build()?;
 
-    let mut gs = State {
-        ecs: World::new(),
-        runstate: RunState::Running,
-    };
+    let mut gs = State { ecs: World::new() };
 
     gs = Container::register_ecs_components(gs);
 
     let map: Map = Map::new_map_rooms_and_corridors();
     let (player_x, player_y) = map.rooms[0].center();
 
-    gs = create_character(gs, player_x, player_y);
+    let data = create_character(gs, player_x, player_y);
 
-    gs = monster_generation(gs, map.rooms.clone());
-
-    gs.ecs.insert(map);
+    gs = insert_entities(data, (player_x, player_y), map);
 
     rltk::main_loop(context, gs)
 }
