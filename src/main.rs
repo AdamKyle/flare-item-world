@@ -36,6 +36,12 @@ pub use monster_generation::*;
 mod entity_manager;
 pub use entity_manager::*;
 
+mod melee_combat_system;
+pub use melee_combat_system::*;
+
+mod damage_system;
+pub use damage_system::*;
+
 fn main() -> rltk::BError {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
 

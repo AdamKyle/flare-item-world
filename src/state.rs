@@ -1,5 +1,7 @@
+use crate::{melee_combat_system, DamageSystem, MeleeCombatSystem};
+
 use super::{
-    draw_map, player_input, Map, MapIndexingSystem, MonsterAI, Position, Renderable,
+    damage_system, draw_map, player_input, Map, MapIndexingSystem, MonsterAI, Position, Renderable,
     VisibilitySystem,
 };
 use rltk::{GameState, Rltk};
@@ -31,6 +33,12 @@ impl State {
 
         let mut mapindex = MapIndexingSystem {};
         mapindex.run_now(&self.ecs);
+
+        let mut melee_combat_system = MeleeCombatSystem {};
+        melee_combat_system.run_now(&self.ecs);
+
+        let mut damage_system = DamageSystem {};
+        damage_system.run_now(&self.ecs);
 
         self.ecs.maintain();
     }
@@ -73,6 +81,8 @@ impl GameState for State {
             let mut runwriter = self.ecs.write_resource::<RunState>();
             *runwriter = newrunstate;
         }
+
+        damage_system::delete_the_dead(&mut self.ecs);
 
         draw_map(&self.ecs, ctx);
 

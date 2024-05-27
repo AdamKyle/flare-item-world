@@ -1,4 +1,4 @@
-use super::{BlocksTile, Monster, Name, Position, Rect, Renderable, State, Viewshed};
+use super::{BlocksTile, CombatStats, Monster, Name, Position, Rect, Renderable, State, Viewshed};
 use rltk::RGB;
 use specs::prelude::*;
 
@@ -39,6 +39,12 @@ pub fn monster_generation(mut gs: State, rooms: Vec<Rect>) -> State {
             .with(Monster {})
             .with(Name {
                 name: format!("{} #{}", &name, i),
+            })
+            .with(CombatStats {
+                max_hp: 16,
+                hp: 16,
+                defense: 1,
+                power: 2,
             })
             .with(BlocksTile {})
             .build();

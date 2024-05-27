@@ -27,6 +27,25 @@ pub struct Viewshed {
     pub dirty: bool,
 }
 
+/// Details Combat Stats for Entities
+///
+/// Right now this is used for both entities and players.
+#[derive(Component, Debug)]
+pub struct CombatStats {
+    pub max_hp: i32,
+    pub hp: i32,
+    pub defense: i32,
+    pub power: i32,
+}
+
+/// When we want to attack, we want to set th target as the entity.
+///
+/// This can be used for any entity that wants to hit any other entity.
+#[derive(Component, Debug, Clone)]
+pub struct WantsToMelee {
+    pub target: Entity,
+}
+
 // Create a Blocks Tile Tag.
 #[derive(Component, Debug)]
 pub struct BlocksTile {}
@@ -42,4 +61,26 @@ pub struct Monster {}
 #[derive(Component, Debug)]
 pub struct Name {
     pub name: String,
+}
+
+/// An entity for tracking damage.
+#[derive(Component, Debug)]
+pub struct SufferDamage {
+    pub amount: Vec<i32>,
+}
+
+/// Track damage on the entity.
+///
+/// Track and store the damage for an entity.
+impl SufferDamage {
+    pub fn new_damage(store: &mut WriteStorage<SufferDamage>, victim: Entity, amount: i32) {
+        if let Some(suffering) = store.get_mut(victim) {
+            suffering.amount.push(amount);
+        } else {
+            let dmg = SufferDamage {
+                amount: vec![amount],
+            };
+            store.insert(victim, dmg).expect("Unable to insert damage");
+        }
+    }
 }
